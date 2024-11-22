@@ -114,6 +114,16 @@
         "author": "jxxghp",
         "level": 1
     },
+    },
+    "jimmg": {
+        "name": "jimmg",
+        "description": "整理入库时通知ChineseSubFinder下载字幕。",
+        "labels": "字幕",
+        "version": "1.1",
+        "icon": "chinesesubfinder.png",
+        "author": "jimmg",
+        "level": 1
+    },
     "DoubanRank": {
         "name": "豆瓣榜单订阅",
         "description": "监控豆瓣热门榜单，自动添加订阅。",
