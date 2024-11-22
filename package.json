@@ -113,7 +113,6 @@
         "icon": "chinesesubfinder.png",
         "author": "jxxghp",
         "level": 1
-    }
     },
     "jimmg": {
         "name": "jimmg",
@@ -123,8 +122,7 @@
         "icon": "chinesesubfinder.png",
         "author": "jimmg",
         "level": 1
-        }
-    },
+  },
     "DoubanRank": {
         "name": "豆瓣榜单订阅",
         "description": "监控豆瓣热门榜单，自动添加订阅。",
