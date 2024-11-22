@@ -212,7 +212,7 @@ class ChineseSubFinder(_PluginBase):
 
         for file_path in item_file_list:
             # 替换文件扩展名为.mp4
-            file_path = str(Path(file_path).with_suffix('.mp4'))
+            # file_path = str(Path(file_path).with_suffix('.mp4'))
             
             # 路径替换
             if self._local_path and self._remote_path and file_path.startswith(self._local_path):    
