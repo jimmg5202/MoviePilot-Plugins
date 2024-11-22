@@ -210,17 +210,23 @@ class ChineseSubFinder(_PluginBase):
             # 蓝光原盘虚拟个文件
             item_file_list = ["%s.mp4" % item_dest / item_dest.name]
 
-        for file_path in item_file_list:
-            # 路径替换
-            if self._local_path and self._remote_path and file_path.startswith(self._local_path):
-                file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
+    # 替换文件扩展名为.mp4
+    new_file_list = []
+    for file_path in item_file_list:
+        new_file_path = Path(file_path).with_suffix('.mp4').as_posix()
+        new_file_list.append(new_file_path)
 
-            # 调用CSF下载字幕
-            self.__request_csf(req_url=req_url,
-                               file_path=file_path,
-                               item_type=0 if item_type == MediaType.MOVIE else 1,
-                               item_bluray=item_bluray)
+    for file_path in new_file_list:
+        # 路径替换
+        if self._local_path and self._remote_path and file_path.startswith(self._local_path):
+            file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
 
+        # 调用CSF下载字幕
+        self.__request_csf(req_url=req_url,
+                           file_path=file_path,
+                           item_type=0 if item_type == MediaType.MOVIE else 1,
+                           item_bluray=item_bluray)
+        
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
         # 一个名称只建一个任务
