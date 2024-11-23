@@ -1,4 +1,3 @@
-import os
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
@@ -21,15 +20,15 @@ class strmcsf1(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.7"
     # 插件作者
-    plugin_author = "jimmg"
+    plugin_author = "jimmg5202"
     # 作者主页
-    author_url = "https://github.com/jimmg"
+    author_url = "https://github.com/jimmg5202"
     # 插件配置项ID前缀
     plugin_config_prefix = "strmcsf1"
     # 加载顺序
-    plugin_order = 1
+    plugin_order = 3
     # 可使用的用户级别
     auth_level = 1
 
@@ -203,30 +202,18 @@ class strmcsf1(_PluginBase):
         # 目的路径
         item_dest: Path = item_transfer.target_path
         # 是否蓝光原盘
-        item_bluray = item_transfer.is_bluray
+        item_bluray = True
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
-        if item_bluray:
-            # 蓝光原盘虚拟个文件
+        # 虚拟个文件
             item_file_list = ["%s.mp4" % item_dest / item_dest.name]
 
         for file_path in item_file_list:
             # 路径替换
             if self._local_path and self._remote_path and file_path.startswith(self._local_path):
                 file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
-           
-            # 创建同名的.mp4文件（如果不存在的话）
-            file_path_obj = Path(file_path)
-            new_file_path = file_path_obj.parent / (file_path_obj.stem + ".mp4")
-            if not new_file_path.exists():
-                # 使用系统命令创建空的同名.mp4文件，这里你也可以根据实际情况选择其他创建文件的方式
-                # 例如以二进制写入模式打开文件然后关闭，也能创建出空文件
-                os.system(f"touch {str(new_file_path)}")
 
-            # 直接修改文件路径后缀为.mp4，其实这里因为前面已经创建了同名的.mp4文件，这里更多是确保格式统一
-            file_path = new_file_path
-            file_path = str(file_path)
             # 调用CSF下载字幕
             self.__request_csf(req_url=req_url,
                                file_path=file_path,
