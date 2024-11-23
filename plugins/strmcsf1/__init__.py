@@ -14,21 +14,21 @@ from app.schemas.types import EventType, MediaType
 from app.utils.http import RequestUtils
 
 
-class strmcsf1(_PluginBase):
+class strmcfs1(_PluginBase):
     # 插件名称
-    plugin_name = "strmcsf"
+    plugin_name = "strmcfs"
     # 插件描述
     plugin_desc = "strm整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.5"
+    plugin_version = "1.6"
     # 插件作者
-    plugin_author = "jimmg"
+    plugin_author = "jxxghp"
     # 作者主页
-    author_url = "https://github.com/jimmg5202"
+    author_url = "https://github.com/jxxghp"
     # 插件配置项ID前缀
-    plugin_config_prefix = "strmcsf1"
+    plugin_config_prefix = "strmcfs1"
     # 加载顺序
     plugin_order = 1
     # 可使用的用户级别
@@ -217,18 +217,17 @@ class strmcsf1(_PluginBase):
             if self._local_path and self._remote_path and file_path.startswith(self._local_path):
                 file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
 
-            # 创建远端路径的同名mp4文件
-            mp4_file_path = self.__create_mp4_file(file_path)
-
-            # 调用CSF下载字幕
-            self.__request_csf(req_url=req_url,
-                               file_path=mp4_file_path,
-                               item_type=0 if item_type == MediaType.MOVIE else 1,
-                               item_bluray=item_bluray)
-
-            # 等待30秒后删除mp4文件
-            time.sleep(30)
-            self.__delete_mp4_file(mp4_file_path)
+            # 创建临时mp4文件
+            temp_mp4_path = self.__create_temp_mp4(file_path)
+            if temp_mp4_path:
+                # 调用CSF下载字幕
+                self.__request_csf(req_url=req_url,
+                                   file_path=temp_mp4_path,
+                                   item_type=0 if item_type == MediaType.MOVIE else 1,
+                                   item_bluray=item_bluray)
+                # 等待30秒后删除临时mp4文件
+                time.sleep(30)
+                self.__delete_temp_mp4(temp_mp4_path)
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
@@ -262,24 +261,18 @@ class strmcsf1(_PluginBase):
         except Exception as e:
             logger.error("连接ChineseSubFinder出错：" + str(e))
 
-    def __create_mp4_file(self, file_path: str) -> str:
+    def __create_temp_mp4(self, file_path: str) -> str:
         """
-        在远端路径创建一个同名的mp4文件
+        创建一个临时的mp4文件
         """
-        mp4_file_name = Path(file_path).name + ".mp4"
-        mp4_file_path = Path(self._remote_path) / mp4_file_name
-        # 确保远端路径存在
-        mp4_file_path.parent.mkdir(parents=True, exist_ok=True)
-        # 创建空的mp4文件
-        open(mp4_file_path, 'a').close()
-        return str(mp4_file_path)
-
-    def __delete_mp4_file(self, file_path: str):
-        """
-        删除远端路径的mp4文件
-        """
+        temp_file_name = Path(file_path).name
+        temp_file_path = Path(self._save_tmp_path) / (temp_file_name + ".mp4")
         try:
-            os.remove(file_path)
-            logger.info(f"已删除临时mp4文件：{file_path}")
+            # 确保临时目录存在
+            Path(self._save_tmp_path).mkdir(parents=True, exist_ok=True)
+            # 创建一个空的mp4文件
+            with open(temp_file_path, 'w') as f:
+                f.write('')
+            return str(temp_file_path)
         except Exception as e:
-            logger
+            logger.error("创建临时mp4文件
