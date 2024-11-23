@@ -3,7 +3,7 @@
         "name": "strmcsf",
         "description": "strm整理入库时通知ChineseSubFinder下载字幕。",
         "labels": "字幕",
-        "version": "1.7",
+        "version": "1.9",
         "icon": "chinesesubfinder.png",
         "author": "jimmg5202",
         "level": 1
