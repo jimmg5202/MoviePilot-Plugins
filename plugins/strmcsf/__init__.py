@@ -1,5 +1,4 @@
 import os
-import time
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
@@ -14,21 +13,21 @@ from app.schemas.types import EventType, MediaType
 from app.utils.http import RequestUtils
 
 
-class strmcsf(_PluginBase):
+class strmcsf1(_PluginBase):
     # 插件名称
-    plugin_name = "strmcsf"
+    plugin_name = "strmcsf1"
     # 插件描述
-    plugin_desc = "strm整理入库时通知ChineseSubFinder下载字幕。"
+    plugin_desc = "整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.1"
+    plugin_version = "1.3"
     # 插件作者
-    plugin_author = "jimmg5202"
+    plugin_author = "jimmg"
     # 作者主页
-    author_url = "https://github.com/jimmg5202"
+    author_url = "https://github.com/jimmg"
     # 插件配置项ID前缀
-    plugin_config_prefix = "strmcsf_"
+    plugin_config_prefix = "strmcsf1_"
     # 加载顺序
     plugin_order = 5
     # 可使用的用户级别
@@ -211,34 +210,29 @@ class strmcsf(_PluginBase):
         if item_bluray:
             # 蓝光原盘虚拟个文件
             item_file_list = ["%s.mp4" % item_dest / item_dest.name]
-          
 
         for file_path in item_file_list:
-    # 创建同名的.mp4空白文件
-    file_name = Path(file_path).stem + ".mp4"
-    blank_file_path = Path(self._save_tmp_path) / file_name
-    with open(blank_file_path, 'w'):
-        pass
+            # 路径替换
+            if self._local_path and self._remote_path and file_path.startswith(self._local_path):
+                file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
+           
+            # 创建同名的.mp4文件（如果不存在的话）
+            file_path_obj = Path(file_path)
+            new_file_path = file_path_obj.parent / (file_path_obj.stem + ".mp4")
+            if not new_file_path.exists():
+                # 使用系统命令创建空的同名.mp4文件，这里你也可以根据实际情况选择其他创建文件的方式
+                # 例如以二进制写入模式打开文件然后关闭，也能创建出空文件
+                os.system(f"touch {str(new_file_path)}")
 
-    # 路径替换
-    if self._local_path and self._remote_path and file_path.startswith(self._local_path):
-        file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
+            # 直接修改文件路径后缀为.mp4，其实这里因为前面已经创建了同名的.mp4文件，这里更多是确保格式统一
+            file_path = new_file_path
+            file_path = str(file_path)
+            # 调用CSF下载字幕
+            self.__request_csf(req_url=req_url,
+                               file_path=file_path,
+                               item_type=0 if item_type == MediaType.MOVIE else 1,
+                               item_bluray=item_bluray)
 
-    # 调用CSF下载字幕
-    self.__request_csf(req_url=req_url,
-                       file_path=file_path,
-                       item_type=0 if item_type == MediaType.MOVIE else 1,
-                       item_bluray=item_bluray)
-
-    # 15秒后删除刚创建的空白文件
-    time.sleep(15)
-    try:
-        os.remove(blank_file_path)
-        logger.info(f"已删除临时空白文件: {blank_file_path}")
-    except OSError as e:
-        logger.error(f"删除临时空白文件 {blank_file_path} 时出错: {e}")
-
-  
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
         # 一个名称只建一个任务
