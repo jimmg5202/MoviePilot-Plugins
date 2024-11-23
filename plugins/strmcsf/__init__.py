@@ -14,7 +14,7 @@ from app.schemas.types import EventType, MediaType
 from app.utils.http import RequestUtils
 
 
-class ChineseSubFinder(_PluginBase):
+class strmcsf(_PluginBase):
     # 插件名称
     plugin_name = "strmcsf"
     # 插件描述
