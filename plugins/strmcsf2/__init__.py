@@ -1,5 +1,3 @@
-import time
-import os
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
@@ -13,15 +11,16 @@ from app.schemas import TransferInfo
 from app.schemas.types import EventType, MediaType
 from app.utils.http import RequestUtils
 
+
 class strmcsf2(_PluginBase):
     # 插件名称
     plugin_name = "strmcsf2"
     # 插件描述
-    plugin_desc = "整理入库时通知ChineseSubFinder下载字幕。"
+    plugin_desc = "strm整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "2.5"
+    plugin_version = "3.0"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -29,7 +28,7 @@ class strmcsf2(_PluginBase):
     # 插件配置项ID前缀
     plugin_config_prefix = "strmcsf2"
     # 加载顺序
-    plugin_order = 5
+    plugin_order = 2
     # 可使用的用户级别
     auth_level = 1
 
@@ -59,7 +58,7 @@ class strmcsf2(_PluginBase):
     def get_command() -> List[Dict[str, Any]]:
         pass
 
-    def get_api(self) -> List[Dict[str, Any]]:
+    def get_api() -> List[Dict[str, Any]]:
         pass
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
@@ -202,31 +201,23 @@ class strmcsf2(_PluginBase):
         item_type = item_media.type
         # 目的路径
         item_dest: Path = item_transfer.target_path
-        # 是否蓝光原盘
-        item_bluray = item_transfer.is_bluray
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
-        # 将所有文件后缀修改为mp4（这里简单地替换后缀名，实际可能需要更严谨的文件处理逻辑）
-        item_file_list = [str(Path(fp).with_suffix('.mp4')) for fp in item_file_list]
-        
-    # 格式化处理本地路径和远端路径，去除两端空格并统一转换为小写形式（可根据实际情况调整大小写处理方式）
-    local_path = self._local_path.strip().lower() if self._local_path else None
-    remote_path = self._remote_path.strip().lower() if self._remote_path else None
-    
-        for file_path in item_file_list:
-            
-            # 也将文件路径转换为小写形式进行比较和替换操作
-        file_path_lower = file_path.lower()
-        if local_path and remote_path and file_path_lower.startswith(local_path):
-            file_path = file_path.replace(local_path, remote_path).replace('\\', '/')
-            
+        # 现在默认都当作蓝光原盘处理，虚拟个文件
+        item_bluray = True
+        item_file_list = ["%s.mp4" % item_dest / item_dest.name]
 
-            # 调用CSF下载字幕，这里统一将item_bluray设为True
+        for file_path in item_file_list:
+            # 路径替换
+            if self._local_path and self._remote_path and file_path.startswith(self._local_path):
+                file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
+
+            # 调用CSF下载字幕
             self.__request_csf(req_url=req_url,
                                file_path=file_path,
                                item_type=0 if item_type == MediaType.MOVIE else 1,
-                               item_bluray=True)
+                               item_bluray=item_bluray)
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
