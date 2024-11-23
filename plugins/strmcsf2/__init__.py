@@ -20,7 +20,7 @@ class strmcsf2(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "5.1"
+    plugin_version = "5.2"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -202,18 +202,15 @@ class strmcsf2(_PluginBase):
         # 目的路径
         item_dest: Path = item_transfer.target_path
         # 是否蓝光原盘
-        item_bluray = item_transfer.is_bluray
+        item_bluray = true
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
-        if item_bluray:
+
             # 蓝光原盘虚拟个文件
             item_file_list = ["%s.mp4" % item_dest / item_dest.name]
 
         for file_path in item_file_list:
-            
-            # 修改文件后缀为mp4
-            modified_file_path = Path(file_path).with_suffix('.mp4').as_posix()
 
             
             # 路径替换
@@ -235,7 +232,7 @@ class strmcsf2(_PluginBase):
             "physical_video_file_full_path": file_path,
             "task_priority_level": 3,
             "media_server_inside_video_id": "",
-            "is_bluray": true
+            "is_bluray": item_bluray
         }
         try:
             res = RequestUtils(headers={
