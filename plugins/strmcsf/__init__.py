@@ -12,21 +12,21 @@ from app.schemas.types import EventType, MediaType
 from app.utils.http import RequestUtils
 
 
-class strmcsf1(_PluginBase):
+class strmcsf(_PluginBase):
     # 插件名称
-    plugin_name = "strmcsf"
+    plugin_name = "strmcsf234"
     # 插件描述
     plugin_desc = "整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.7"
+    plugin_version = "1.9"
     # 插件作者
-    plugin_author = "jimmg5202"
+    plugin_author = "jxxghp"
     # 作者主页
-    author_url = "https://github.com/jimmg5202"
+    author_url = "https://github.com/jxxghp"
     # 插件配置项ID前缀
-    plugin_config_prefix = "strmcsf1"
+    plugin_config_prefix = "strmcsf"
     # 加载顺序
     plugin_order = 3
     # 可使用的用户级别
@@ -202,11 +202,12 @@ class strmcsf1(_PluginBase):
         # 目的路径
         item_dest: Path = item_transfer.target_path
         # 是否蓝光原盘
-        item_bluray = True
+        item_bluray = item_transfer.is_bluray
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
-        # 虚拟个文件
+        if item_bluray:
+            # 蓝光原盘虚拟个文件
             item_file_list = ["%s.mp4" % item_dest / item_dest.name]
 
         for file_path in item_file_list:
