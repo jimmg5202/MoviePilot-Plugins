@@ -20,7 +20,7 @@ class strmcsf2(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -229,6 +229,7 @@ class strmcsf2(_PluginBase):
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
         # 一个名称只建一个任务
         logger.info("通知ChineseSubFinder下载字幕: %s" % file_path)
+        file_path_str = str(file_path)
         params = {
             "video_type": item_type,
             "physical_video_file_full_path": file_path,
