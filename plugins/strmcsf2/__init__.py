@@ -1,6 +1,8 @@
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
+import time
+import os
 
 from app.core.config import settings
 from app.core.context import MediaInfo
@@ -11,7 +13,6 @@ from app.schemas import TransferInfo
 from app.schemas.types import EventType, MediaType
 from app.utils.http import RequestUtils
 
-
 class strmcsf2(_PluginBase):
     # 插件名称
     plugin_name = "strmcsf2"
@@ -20,7 +21,7 @@ class strmcsf2(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.5"
+    plugin_version = "2.0"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -221,11 +222,25 @@ class strmcsf2(_PluginBase):
             # 将Path对象转换为字符串，解决JSON序列化问题
             file_path = str(file_path)
 
+            # 创建同名的MP4文件
+            temp_file_path = self._save_tmp_path / (Path(file_path).name + ".mp4")
+            with open(temp_file_path, 'wb') as f:
+                f.write(b'')  # 写入空内容，创建文件
+
+            print(f"临时文件 {temp_file_path} 已创建。")
+
             # 调用CSF下载字幕
             self.__request_csf(req_url=req_url,
                                file_path=file_path,
                                item_type=0 if item_type == MediaType.MOVIE else 1,
                                item_bluray=item_bluray)
+
+            # 等待60秒
+            time.sleep(60)
+
+            # 删除临时文件
+            os.remove(temp_file_path)
+            print(f"临时文件 {temp_file_path} 已删除。")
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
@@ -256,5 +271,5 @@ class strmcsf2(_PluginBase):
                         logger.info("ChineseSubFinder任务添加成功：%s" % job_id)
                 elif res.status_code != 200:
                     logger.warn(f"ChineseSubFinder调用出错：{res.status_code} - {res.reason}")
-        except Exception as e:
+        except Exception as e
             logger.error("连接ChineseSubFinder出错：" + str(e))
