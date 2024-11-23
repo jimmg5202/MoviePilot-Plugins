@@ -21,7 +21,7 @@ class strmcsf1(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.3"
+    plugin_version = "1.4"
     # 插件作者
     plugin_author = "jimmg"
     # 作者主页
@@ -220,9 +220,13 @@ class strmcsf1(_PluginBase):
             file_path_obj = Path(file_path)
             new_file_path = file_path_obj.parent / (file_path_obj.stem + ".mp4")
             if not new_file_path.exists():
-                # 使用系统命令创建空的同名.mp4文件，这里你也可以根据实际情况选择其他创建文件的方式
-                # 例如以二进制写入模式打开文件然后关闭，也能创建出空文件
-                os.system(f"touch {str(new_file_path)}")
+                try:
+        # 使用系统命令创建空的同名.mp4文件，这里你也可以根据实际情况选择其他创建文件的方式
+        # 例如以二进制写入模式打开文件然后关闭，也能创建出空文件
+        os.system(f"touch {str(new_file_path)}")
+        logger.info(f"成功创建文件: {str(new_file_path)}")
+    except Exception as e:
+        logger.error(f"创建文件 {str(new_file_path)} 时出错: {str(e)}")
 
             # 直接修改文件路径后缀为.mp4，其实这里因为前面已经创建了同名的.mp4文件，这里更多是确保格式统一
             file_path = new_file_path
