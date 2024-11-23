@@ -24,9 +24,9 @@ class strmcfs1(_PluginBase):
     # 插件版本
     plugin_version = "1.6"
     # 插件作者
-    plugin_author = "jxxghp"
+    plugin_author = "jimmg5202"
     # 作者主页
-    author_url = "https://github.com/jxxghp"
+    author_url = "https://github.com/jimmg5202"
     # 插件配置项ID前缀
     plugin_config_prefix = "strmcfs1"
     # 加载顺序
