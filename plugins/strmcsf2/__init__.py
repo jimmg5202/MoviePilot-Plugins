@@ -1,8 +1,8 @@
+import time
+import os
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
-import time
-import os
 
 from app.core.config import settings
 from app.core.context import MediaInfo
