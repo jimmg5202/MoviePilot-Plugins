@@ -1,19 +1,9 @@
 {
-    "strmcsf1": {
-        "name": "strmcsf",
+    "strmcfs1123": {
+        "name": "strm 刮削字幕",
         "description": "strm整理入库时通知ChineseSubFinder下载字幕。",
         "labels": "字幕",
-        "version": "1.9",
-        "icon": "chinesesubfinder.png",
-        "author": "jimmg5202",
-        "level": 1
-    },
-
-    "strmcsf2": {
-        "name": "strmcsf2",
-        "description": "strm整理入库时通知ChineseSubFinder下载字幕。",
-        "labels": "字幕",
-        "version": "5.2",
+        "version": "1.0",
         "icon": "chinesesubfinder.png",
         "author": "jxxghp",
         "level": 1
