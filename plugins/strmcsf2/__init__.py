@@ -16,11 +16,11 @@ class strmcsf2(_PluginBase):
     # 插件名称
     plugin_name = "strmcsf2"
     # 插件描述
-    plugin_desc = "strm整理入库时通知ChineseSubFinder下载字幕。"
+    plugin_desc = "整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.4"
+    plugin_version = "1.5"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -28,7 +28,7 @@ class strmcsf2(_PluginBase):
     # 插件配置项ID前缀
     plugin_config_prefix = "strmcsf2"
     # 加载顺序
-    plugin_order = 1
+    plugin_order = 5
     # 可使用的用户级别
     auth_level = 1
 
@@ -214,13 +214,12 @@ class strmcsf2(_PluginBase):
             # 路径替换
             if self._local_path and self._remote_path and file_path.startswith(self._local_path):
                 file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
-              
-               # 将文件名后缀修改为mp4（原文件名部分替换逻辑）
+            
+            # 将文件名后缀修改为mp4（原文件名部分替换逻辑）
             file_path = Path(file_path).with_suffix('.mp4')
             
             # 将Path对象转换为字符串，解决JSON序列化问题
             file_path = str(file_path)
-
 
             # 调用CSF下载字幕
             self.__request_csf(req_url=req_url,
@@ -228,7 +227,7 @@ class strmcsf2(_PluginBase):
                                item_type=0 if item_type == MediaType.MOVIE else 1,
                                item_bluray=item_bluray)
 
- @lru_cache(maxsize=128)
+    @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
         # 一个名称只建一个任务
         logger.info("通知ChineseSubFinder下载字幕: %s" % file_path)
