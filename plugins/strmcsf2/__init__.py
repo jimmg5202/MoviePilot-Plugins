@@ -21,7 +21,7 @@ class strmcsf2(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "2.1"
+    plugin_version = "2.2"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -271,5 +271,5 @@ class strmcsf2(_PluginBase):
                         logger.info("ChineseSubFinder任务添加成功：%s" % job_id)
                 elif res.status_code != 200:
                     logger.warn(f"ChineseSubFinder调用出错：{res.status_code} - {res.reason}")
-        except Exception as e
+        except Exception as e:
             logger.error("连接ChineseSubFinder出错：" + str(e))
