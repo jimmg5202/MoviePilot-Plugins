@@ -1,6 +1,3 @@
-import os
-import time
-from threading import Timer
 from functools import lru_cache
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
@@ -19,11 +16,11 @@ class strmcfs1123(_PluginBase):
     # 插件名称
     plugin_name = "strm刮削字幕"
     # 插件描述
-    plugin_desc = "整理strm入库时通知ChineseSubFinder下载字幕。"
+    plugin_desc = "整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "1.0"
+    plugin_version = "1.1"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -218,17 +215,11 @@ class strmcfs1123(_PluginBase):
             if self._local_path and self._remote_path and file_path.startswith(self._local_path):
                 file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
 
-            # 修改文件后缀为mp4并创建同名mp4文件
-            mp4_file_path = self._create_and_rename_mp4_file(file_path)
-
             # 调用CSF下载字幕
             self.__request_csf(req_url=req_url,
-                               file_path=mp4_file_path,
+                               file_path=file_path,
                                item_type=0 if item_type == MediaType.MOVIE else 1,
                                item_bluray=item_bluray)
-
-            # 设置60秒后删除mp4文件
-            self._delete_mp4_file_after(mp4_file_path, 60)
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
@@ -261,25 +252,3 @@ class strmcfs1123(_PluginBase):
                     logger.warn(f"ChineseSubFinder调用出错：{res.status_code} - {res.reason}")
         except Exception as e:
             logger.error("连接ChineseSubFinder出错：" + str(e))
-
-    def _create_and_rename_mp4_file(self, file_path):
-        """
-        修改文件后缀为mp4并创建同名的mp4文件
-        """
-        mp4_file_path = file_path + ".mp4"
-        with open(mp4_file_path, 'w') as f:
-            f.write('')  # 创建空文件
-        return mp4_file_path
-
-    def _delete_mp4_file_after(self, file_path, seconds):
-        """
-        设置一个定时器，在指定秒数后删除文件
-        """
-        def delete_file():
-            try:
-                os.remove(file_path)
-                logger.info(f"Deleted temporary mp4 file: {file_path}")
-            except Exception as e:
-                logger.error(f"Failed to delete temporary mp4 file: {file_path}, error: {e}")
-
-        Timer(seconds, delete_file).start()
