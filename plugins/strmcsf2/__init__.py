@@ -207,28 +207,19 @@ class strmcsf2(_PluginBase):
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
-        if item_bluray:
-            # 蓝光原盘虚拟个文件
-            item_file_list = ["%s.mp4" % item_dest / item_dest.name]
+        # 将所有文件后缀修改为mp4（这里简单地替换后缀名，实际可能需要更严谨的文件处理逻辑）
+        item_file_list = [str(Path(fp).with_suffix('.mp4')) for fp in item_file_list]
 
         for file_path in item_file_list:
             # 路径替换
             if self._local_path and self._remote_path and file_path.startswith(self._local_path):
                 file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
-            
-            # 将文件名后缀修改为mp4（原文件名部分替换逻辑）
-            file_path = Path(file_path).with_suffix('.mp4')
-            
-            # 将Path对象转换为字符串，解决JSON序列化问题
-            file_path = str(file_path)
 
-
-            # 调用CSF下载字幕
+            # 调用CSF下载字幕，这里统一将item_bluray设为True
             self.__request_csf(req_url=req_url,
                                file_path=file_path,
                                item_type=0 if item_type == MediaType.MOVIE else 1,
-                               item_bluray=true)
-
+                               item_bluray=True)
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
@@ -245,7 +236,7 @@ class strmcsf2(_PluginBase):
             res = RequestUtils(headers={
                 "Authorization": "Bearer %s" % self._api_key
             }).post(req_url, json=params)
-            if not res or res.status_code != 200:
+            if not res or res.status_code!= 200:
                 logger.error("调用ChineseSubFinder API失败！")
             else:
                 # 如果文件目录没有识别的nfo元数据， 此接口会返回控制符，推测是ChineseSubFinder的原因
@@ -257,7 +248,7 @@ class strmcsf2(_PluginBase):
                         logger.warn("ChineseSubFinder下载字幕出错：%s" % message)
                     else:
                         logger.info("ChineseSubFinder任务添加成功：%s" % job_id)
-                elif res.status_code != 200:
+                elif res.status_code!= 200:
                     logger.warn(f"ChineseSubFinder调用出错：{res.status_code} - {res.reason}")
         except Exception as e:
             logger.error("连接ChineseSubFinder出错：" + str(e))
