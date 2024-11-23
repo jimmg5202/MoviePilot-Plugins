@@ -16,11 +16,11 @@ class strmcsf2(_PluginBase):
     # 插件名称
     plugin_name = "strmcsf2"
     # 插件描述
-    plugin_desc = "strm整理入库时通知ChineseSubFinder下载字幕。"
+    plugin_desc = "整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "3.0"
+    plugin_version = "3.3"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -28,7 +28,7 @@ class strmcsf2(_PluginBase):
     # 插件配置项ID前缀
     plugin_config_prefix = "strmcsf2"
     # 加载顺序
-    plugin_order = 2
+    plugin_order = 3
     # 可使用的用户级别
     auth_level = 1
 
@@ -58,7 +58,7 @@ class strmcsf2(_PluginBase):
     def get_command() -> List[Dict[str, Any]]:
         pass
 
-    def get_api() -> List[Dict[str, Any]]:
+    def get_api(self) -> List[Dict[str, Any]]:
         pass
 
     def get_form(self) -> Tuple[List[dict], Dict[str, Any]]:
@@ -204,9 +204,8 @@ class strmcsf2(_PluginBase):
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
-        # 现在默认都当作蓝光原盘处理，虚拟个文件
-        item_bluray = True
-        item_file_list = ["%s.mp4" % item_dest / item_dest.name]
+        # 虚拟个文件
+            item_file_list = ["%s.mp4" % item_dest / item_dest.name]
 
         for file_path in item_file_list:
             # 路径替换
@@ -217,7 +216,7 @@ class strmcsf2(_PluginBase):
             self.__request_csf(req_url=req_url,
                                file_path=file_path,
                                item_type=0 if item_type == MediaType.MOVIE else 1,
-                               item_bluray=item_bluray)
+                               item_bluray=True)
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
@@ -234,7 +233,7 @@ class strmcsf2(_PluginBase):
             res = RequestUtils(headers={
                 "Authorization": "Bearer %s" % self._api_key
             }).post(req_url, json=params)
-            if not res or res.status_code!= 200:
+            if not res or res.status_code != 200:
                 logger.error("调用ChineseSubFinder API失败！")
             else:
                 # 如果文件目录没有识别的nfo元数据， 此接口会返回控制符，推测是ChineseSubFinder的原因
@@ -246,7 +245,7 @@ class strmcsf2(_PluginBase):
                         logger.warn("ChineseSubFinder下载字幕出错：%s" % message)
                     else:
                         logger.info("ChineseSubFinder任务添加成功：%s" % job_id)
-                elif res.status_code!= 200:
+                elif res.status_code != 200:
                     logger.warn(f"ChineseSubFinder调用出错：{res.status_code} - {res.reason}")
         except Exception as e:
             logger.error("连接ChineseSubFinder出错：" + str(e))
