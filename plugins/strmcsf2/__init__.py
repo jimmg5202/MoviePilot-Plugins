@@ -20,7 +20,7 @@ class strmcsf2(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "4.0"
+    plugin_version = "5.1"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -206,11 +206,16 @@ class strmcsf2(_PluginBase):
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
-       
+        if item_bluray:
             # 蓝光原盘虚拟个文件
             item_file_list = ["%s.mp4" % item_dest / item_dest.name]
 
         for file_path in item_file_list:
+            
+            # 修改文件后缀为mp4
+            modified_file_path = Path(file_path).with_suffix('.mp4').as_posix()
+
+            
             # 路径替换
             if self._local_path and self._remote_path and file_path.startswith(self._local_path):
                 file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
