@@ -201,6 +201,8 @@ class strmcsf2(_PluginBase):
         item_type = item_media.type
         # 目的路径
         item_dest: Path = item_transfer.target_path
+        # 是否蓝光原盘
+        item_bluray = True
         # 文件清单
         item_file_list = item_transfer.file_list_new
 
@@ -216,7 +218,7 @@ class strmcsf2(_PluginBase):
             self.__request_csf(req_url=req_url,
                                file_path=file_path,
                                item_type=0 if item_type == MediaType.MOVIE else 1,
-                               item_bluray=True)
+                               item_bluray=item_bluray)
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
