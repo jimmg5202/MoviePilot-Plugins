@@ -222,25 +222,13 @@ class strmcsf2(_PluginBase):
             # 将Path对象转换为字符串，解决JSON序列化问题
             file_path = str(file_path)
 
-            # 创建同名的MP4文件
-            temp_file_path = self._save_tmp_path / (Path(file_path).name + ".mp4")
-            with open(temp_file_path, 'wb') as f:
-                f.write(b'')  # 写入空内容，创建文件
-
-            print(f"临时文件 {temp_file_path} 已创建。")
 
             # 调用CSF下载字幕
             self.__request_csf(req_url=req_url,
                                file_path=file_path,
                                item_type=0 if item_type == MediaType.MOVIE else 1,
-                               item_bluray=item_bluray)
+                               item_bluray=true)
 
-            # 等待60秒
-            time.sleep(60)
-
-            # 删除临时文件
-            os.remove(temp_file_path)
-            print(f"临时文件 {temp_file_path} 已删除。")
 
     @lru_cache(maxsize=128)
     def __request_csf(self, req_url, file_path, item_type, item_bluray):
