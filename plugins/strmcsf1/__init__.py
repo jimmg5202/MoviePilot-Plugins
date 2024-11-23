@@ -14,9 +14,9 @@ from app.schemas.types import EventType, MediaType
 from app.utils.http import RequestUtils
 
 
-class strmcfs1(_PluginBase):
+class strmcsf1(_PluginBase):
     # 插件名称
-    plugin_name = "strmcfs"
+    plugin_name = "strmcsf"
     # 插件描述
     plugin_desc = "strm整理入库时通知ChineseSubFinder下载字幕。"
     # 插件图标
@@ -28,7 +28,7 @@ class strmcfs1(_PluginBase):
     # 作者主页
     author_url = "https://github.com/jimmg5202"
     # 插件配置项ID前缀
-    plugin_config_prefix = "strmcfs1"
+    plugin_config_prefix = "strmcsf1"
     # 加载顺序
     plugin_order = 1
     # 可使用的用户级别
