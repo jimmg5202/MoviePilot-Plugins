@@ -21,7 +21,7 @@ class strmcsf2(_PluginBase):
     # 插件图标
     plugin_icon = "chinesesubfinder.png"
     # 插件版本
-    plugin_version = "2.4"
+    plugin_version = "2.5"
     # 插件作者
     plugin_author = "jxxghp"
     # 作者主页
@@ -209,11 +209,18 @@ class strmcsf2(_PluginBase):
 
         # 将所有文件后缀修改为mp4（这里简单地替换后缀名，实际可能需要更严谨的文件处理逻辑）
         item_file_list = [str(Path(fp).with_suffix('.mp4')) for fp in item_file_list]
-
+        
+    # 格式化处理本地路径和远端路径，去除两端空格并统一转换为小写形式（可根据实际情况调整大小写处理方式）
+    local_path = self._local_path.strip().lower() if self._local_path else None
+    remote_path = self._remote_path.strip().lower() if self._remote_path else None
+    
         for file_path in item_file_list:
-            # 路径替换
-            if self._local_path and self._remote_path and file_path.startswith(self._local_path):
-                file_path = file_path.replace(self._local_path, self._remote_path).replace('\\', '/')
+            
+            # 也将文件路径转换为小写形式进行比较和替换操作
+        file_path_lower = file_path.lower()
+        if local_path and remote_path and file_path_lower.startswith(local_path):
+            file_path = file_path.replace(local_path, remote_path).replace('\\', '/')
+            
 
             # 调用CSF下载字幕，这里统一将item_bluray设为True
             self.__request_csf(req_url=req_url,
